@@ -1,0 +1,23 @@
+spring:
+  application.name: test-data
+  #콘솔 색상 설정
+  output:
+    ansi:
+      enabled: always
+  # JPA OSIV false
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate.ddl-auto: create
+    show-sql: true
+    # console 에 formatting 한 query 출력
+    properties:
+      hibernate.format_sql: true
+  sql.init.mode: always
+
+debug: false
+
+logging:
+  level:
+    uno.fastcampus.testdata: debug
+    org.springframework.web.servlet: debug
