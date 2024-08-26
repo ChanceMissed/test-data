@@ -2,6 +2,8 @@ package uno.fastcampus.testdata.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,10 +31,10 @@ public class SchemaField extends AuditingFields{
     @ManyToOne(optional = false) // nullable 하지 않다
     private TableSchema tableSchema;
 
-    @Setter private @Column(nullable = false) String fieldName;
-    @Setter private @Column(nullable = false) MockDataType mockDataType;
-    @Setter private @Column(nullable = false) Integer fieldOrder;
-    @Setter private @Column(nullable = false) Integer blankPercent;
+    @Setter @Column(nullable = false) private String fieldName;
+    @Setter @Column(nullable = false)  @Enumerated(EnumType.STRING) private MockDataType mockDataType;
+    @Setter @Column(nullable = false) private Integer fieldOrder;
+    @Setter @Column(nullable = false) private  Integer blankPercent;
     @Setter private String typeOptionJson; // {min: 1, max: 5}
     @Setter private String forceValue;
 
