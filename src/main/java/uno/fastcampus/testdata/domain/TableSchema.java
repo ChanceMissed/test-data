@@ -1,11 +1,16 @@
 package uno.fastcampus.testdata.domain;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -21,6 +26,14 @@ import lombok.ToString;
  */
 @Getter
 @ToString(callSuper = true)
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"userId", "schemaName"})
+    },
+    indexes = {
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "modifiedAt")
+    }
+)
 @Entity
 public class TableSchema extends AuditingFields{
 
@@ -28,13 +41,13 @@ public class TableSchema extends AuditingFields{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter private String schemaName;
-    @Setter private String userId;
+    @Setter @Column(nullable = false) private String schemaName;
+    @Setter @Column(nullable = false) private String userId;
+
     @Setter private LocalDateTime exportedAt; // 출력이 되었는지?
 
-
-
     @ToString.Exclude
+    @OrderBy("fieldOrder ASC")
     @OneToMany(mappedBy = "tableSchema", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<SchemaField> schemaFields = new LinkedHashSet<>();
 
