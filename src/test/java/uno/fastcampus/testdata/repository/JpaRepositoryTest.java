@@ -34,7 +34,7 @@ import uno.fastcampus.testdata.domain.constant.MockDataType;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
-public class JpaRepositoryTest {
+class JpaRepositoryTest {
 
     private static final String TEST_AUDITOR = "test_uno";
 
