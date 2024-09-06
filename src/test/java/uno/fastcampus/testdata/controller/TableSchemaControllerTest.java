@@ -4,6 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,6 +67,7 @@ public record TableSchemaControllerTest(
                 .with(csrf())
             )
             .andExpect(status().is3xxRedirection())
+            .andExpect(flash().attribute("tableSchemaRequest",request))
             .andExpect(redirectedUrl("/table-schema"));
     }
 
@@ -104,7 +106,7 @@ public record TableSchemaControllerTest(
         // When & Then
         mvc.perform(get("/table-schema/export"))
             .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
             .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=schema.txt"))
             .andExpect(content().string("download complete!")); //TODO: 나중에 데이터 바꿔야 함
 
