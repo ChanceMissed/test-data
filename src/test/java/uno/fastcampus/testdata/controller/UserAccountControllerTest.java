@@ -17,11 +17,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import uno.fastcampus.testdata.config.SecurityConfig;
 
-@Disabled("#15 강의 내용에서 테스트만 다루므로 테스트를 먼저 작성함. 테스트로 스펙을 전달하고, 아직 구현이 없으므로 비활성화.")
+//@Disabled("#15 강의 내용에서 테스트만 다루므로 테스트를 먼저 작성함. 테스트로 스펙을 전달하고, 아직 구현이 없으므로 비활성화.")
 @DisplayName("[Controller] 회원 컨트롤러 테스트")
 @Import(SecurityConfig.class)
 @WebMvcTest
-public record UserAccountControllerTEst(@Autowired MockMvc mvc) {
+public record UserAccountControllerTest(@Autowired MockMvc mvc) {
 
     @WithMockUser
     @DisplayName("[GET] 내 정보 페이지 -> 내 정보 뷰 (정상)")

@@ -1,14 +1,13 @@
 package uno.fastcampus.testdata.controller;
 
-import lombok.Getter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class MainController {
+public class UserAccountController {
 
-    @GetMapping("/")
-    public String root(){
-        return "forward:/table-schema";
+    @GetMapping("/my-account")
+    public String myAccount(){
+        return "my-account";
     }
 }
