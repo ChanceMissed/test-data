@@ -1,6 +1,9 @@
 package uno.fastcampus.testdata.domain.constant;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +26,14 @@ public enum MockDataType {
 
     private final Set<String> requiredOptions;
     private final MockDataType baseType;
+
+    private static final List<MockDataTypeObject> objects = Stream.of(MockDataType.values())
+        .map(MockDataType::toObject)
+        .toList();
+
+    public static List<MockDataTypeObject> toObjects(){
+        return objects;
+    }
 
     public boolean isBaseType(){
         return baseType == null;
