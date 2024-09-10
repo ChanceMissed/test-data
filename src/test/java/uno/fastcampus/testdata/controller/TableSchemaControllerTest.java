@@ -1,5 +1,6 @@
 package uno.fastcampus.testdata.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,7 +40,7 @@ public record TableSchemaControllerTest(
     @Autowired ObjectMapper mapper
     ) {
 
-    @DisplayName("[GET] 테이블 스키마 페이지 -> 테이블 스키마 뷰 (정상)")
+    @DisplayName("[GET] 테이블 스키마 조회, 비로그인 최초 진입 (정상)")
     @Test
     void givenNothing_whenRequesting_thenShowsTableSchemaView() throws Exception {
         // Given
@@ -51,6 +52,26 @@ public record TableSchemaControllerTest(
             .andExpect(model().attributeExists("tableSchema"))
             .andExpect(model().attributeExists("mockDataTypes"))
             .andExpect(model().attributeExists("fileTypes"))
+            .andExpect(view().name("table-schema"));
+    }
+
+    @DisplayName("[GET] 테이블 스키마 조회, 로그인 + 특정 테이블 스키마 (정상)")
+    @Test
+    void givenAuthenticatedUserAndSchemaName_whenRequesting_thenShowTableSchema() throws Exception {
+        // Given
+        var schemaName = "test_schema";
+
+        // When & Then
+        mvc.perform(
+                get("/table-schema")
+                    .queryParam("schemaName", schemaName)
+            )
+            .andExpect(status().isOk()) // 200 OK
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+//            .andExpect(model().attributeExists("tableSchema", hasProperty("schemaName", is(schemaName))))
+            .andExpect(model().attributeExists("mockDataTypes"))
+            .andExpect(model().attributeExists("fileTypes"))
+            .andExpect(content().string(containsString(schemaName)))
             .andExpect(view().name("table-schema"));
     }
 
@@ -88,6 +109,7 @@ public record TableSchemaControllerTest(
         mvc.perform(get("/table-schema/my-schemas"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().attributeExists("tableSchemas"))
             .andExpect(view().name("my-schemas"));
     }
 
