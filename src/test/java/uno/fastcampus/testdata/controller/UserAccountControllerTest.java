@@ -3,6 +3,7 @@ package uno.fastcampus.testdata.controller;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -33,6 +34,8 @@ public record UserAccountControllerTest(@Autowired MockMvc mvc) {
         mvc.perform(get("/my-account"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().attributeExists("nickname"))
+            .andExpect(model().attributeExists("email"))
             .andExpect(view().name("my-account"));
 
     }
