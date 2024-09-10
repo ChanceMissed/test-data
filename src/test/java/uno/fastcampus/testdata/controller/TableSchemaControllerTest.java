@@ -6,10 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uno.fastcampus.testdata.config.SecurityConfig;
+import uno.fastcampus.testdata.domain.constant.ExportFileType;
 import uno.fastcampus.testdata.domain.constant.MockDataType;
 import uno.fastcampus.testdata.dto.request.SchemaFieldRequest;
+import uno.fastcampus.testdata.dto.request.TableSchemaExportRequest;
 import uno.fastcampus.testdata.dto.request.TableSchemaRequest;
 import uno.fastcampus.testdata.util.FormDataEncoder;
 
@@ -31,18 +35,22 @@ import uno.fastcampus.testdata.util.FormDataEncoder;
 @WebMvcTest
 public record TableSchemaControllerTest(
     @Autowired MockMvc mvc,
-    @Autowired FormDataEncoder formDataEncoder
-) {
+    @Autowired FormDataEncoder formDataEncoder,
+    @Autowired ObjectMapper mapper
+    ) {
 
     @DisplayName("[GET] 테이블 스키마 페이지 -> 테이블 스키마 뷰 (정상)")
     @Test
-    void givenNothing_when_then() throws Exception {
+    void givenNothing_whenRequesting_thenShowsTableSchemaView() throws Exception {
         // Given
 
         // When & Then
         mvc.perform(get("/table-schema"))
             .andExpect(status().isOk()) // 200 OK
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().attributeExists("tableSchema"))
+            .andExpect(model().attributeExists("mockDataTypes"))
+            .andExpect(model().attributeExists("fileTypes"))
             .andExpect(view().name("table-schema"));
     }
 
@@ -95,20 +103,29 @@ public record TableSchemaControllerTest(
                     .with(csrf())
             )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/my-schemas"));
+            .andExpect(redirectedUrl("/table-schema/my-schemas"));
     }
 
-    @DisplayName("[GET] 테이블 스키마 파일 다운로드 -> 테이블 스키마 파일 (정상)")
     @Test
     void givenTableSchema_whenDownloading_thenReturnsFile() throws Exception {
         // Given
+        TableSchemaExportRequest request = TableSchemaExportRequest.of(
+            "test",
+            77,
+            ExportFileType.JSON,
+            List.of(
+                SchemaFieldRequest.of("id", MockDataType.ROW_NUMBER, 1, 0, null, null),
+                SchemaFieldRequest.of("name", MockDataType.STRING, 1, 0, "option", "well"),
+                SchemaFieldRequest.of("age", MockDataType.NUMBER, 3, 20, null, null)
+            )
+        );
+        String queryParam = formDataEncoder.encode(request, false);
 
         // When & Then
-        mvc.perform(get("/table-schema/export"))
+        mvc.perform(get("/table-schema/export?" + queryParam))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=schema.txt"))
-            .andExpect(content().string("download complete!")); //TODO: 나중에 데이터 바꿔야 함
-
+            .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=table-schema.txt"))
+            .andExpect(content().json(mapper.writeValueAsString(request))); // TODO: 나중에 데이터 바꿔야 함
     }
 }

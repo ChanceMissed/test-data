@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("[Util][test] Form 데이터 인코더")
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -38,7 +37,7 @@ record FormDataEncoderTest(@Autowired FormDataEncoder formDataEncoder) {
         );
 
         // When
-        String result = formDataEncoder.encode(obj, false);
+        String result = formDataEncoder.encode(obj);
 
         // Then
         assertThat(result).isEqualTo(
