@@ -1,13 +1,15 @@
 package uno.fastcampus.testdata.dto.response;
 
+import java.time.LocalDateTime;
 import uno.fastcampus.testdata.dto.TableSchemaDto;
 
 public record SimpleTableSchemaResponse (
     String schemaName,
-    String userId
+    String userId,
+    LocalDateTime modifiedAt
 ){
 
     public static SimpleTableSchemaResponse fromDto(TableSchemaDto dto){
-        return new SimpleTableSchemaResponse(dto.schemaName(), dto.userId());
+        return new SimpleTableSchemaResponse(dto.schemaName(), dto.userId(), dto.modifiedAt());
     }
 }
